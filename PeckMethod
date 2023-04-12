@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define soil parameters
+gamma = 120.0  # unit weight of soil (pcf)
+phi = 30.0  # angle of internal friction (degrees)
+m4c = 0.7  # coefficient of lateral earth pressure at rest for clay
+
+# Define functions for braced support capacity
+def pmax_sand(H):
+    return 0.65 * gamma * H
+
+def pmax_stiff_clay(H):
+    ka = np.tan(np.deg2rad(45 - phi/2))**2
+    return gamma * H * ka
+
+def pmax_soft_clay(H):
+    return gamma * H * (1 - m4c/gamma)
+
+# Define depth values for plotting
+depths_sand = np.array([0, 0.25, 0.5, 0.75, 1.0])
+depths_stiff_clay = np.array([0, 0.25, 0.5, 0.75, 1.0])
+depths_soft_clay = np.array([0, 0.25, 0.5, 0.75, 1.0])
+
+# Calculate braced support capacity for each depth and soil type
+pmaxs_sand = pmax_sand(depths_sand)
+pmaxs_stiff_clay = pmax_stiff_clay(depths_stiff_clay)
+pmaxs_soft_clay = pmax_soft_clay(depths_soft_clay)
+
+# Plot results
+plt.plot(pmaxs_sand, depths_sand, label='Sand')
+plt.plot(pmaxs_stiff_clay, depths_stiff_clay, label='Stiff Clay')
+plt.plot(pmaxs_soft_clay, depths_soft_clay, label='Soft Clay')
+
+# Add vertical lines at 0.25H and 0.75H for soft clay and 0.25H and 0.75H for stiff clay
+H = depths_stiff_clay[-1]
+plt.axhline(y=0.25*H, linestyle='--', color='gray')
+plt.axhline(y=0.75*H, linestyle='--', color='gray')
+
+H = depths_soft_clay[-1]
+plt.axhline(y=0.25*H, linestyle='--', color='gray')
+plt.axhline(y=0.75*H, linestyle='--', color='gray')
+
+plt.legend()
+plt.xlabel('Braced Support Capacity (psf)')
+plt.ylabel('Depth (ft)')
+plt.show()
